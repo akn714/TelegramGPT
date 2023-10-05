@@ -1,3 +1,5 @@
 os
 dotenv
 telebot
+pinecone-client
+langchain
