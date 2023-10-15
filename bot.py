@@ -14,8 +14,11 @@ bot = telebot.TeleBot(BOT_TOKEN)
 @bot.message_handler(commands=['start','hello'])
 def send_welcome(message):
     print('[user]', bot.get_my_name())
-    print('[chat]', bot.get_chat())
-    bot.reply_to(message, bot.get_me())
+    # print('[chat]', bot.get_chat())
+    # bot.reply_backend("hi")
+    bot.send_message("@akn_714", 'hi!')
+    bot.reply_to(message, "Hello! What's up Dude!")
+    # bot.reply_to(bot.get_me())
     # await bot.reply_to(message, await get_response(message))
 
 # this function replies the same message if it doesn't match with above commands in previous function
