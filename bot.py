@@ -16,9 +16,9 @@ def send_welcome(message):
     print('[user]', bot.get_my_name())
     # print('[chat]', bot.get_chat())
     # bot.reply_backend("hi")
-    bot.send_message("@akn_714", 'hi!')
-    print(message)
-    bot.reply_to(message, get_response(message))
+    # bot.send_message("@akn_714", 'hi!')
+    bot.reply_to(message, 'generating response...')
+    bot.reply_to(message, get_response(message.text))
     # bot.reply_to(bot.get_me())
     # await bot.reply_to(message, await get_response(message))
 

@@ -78,7 +78,7 @@ def get_response(query):
     }
     print('[+] - aibot2 #######################################################################')
     print('[+] - aibot2', res)
-    return res
+    return res['choices'][0]['message']['content']
 
 
 if __name__ == "__main__":
