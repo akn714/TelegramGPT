@@ -2,7 +2,7 @@ import os
 
 import telebot
 
-# from gpt import get_response
+from gpt import get_response
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -17,7 +17,8 @@ def send_welcome(message):
     # print('[chat]', bot.get_chat())
     # bot.reply_backend("hi")
     bot.send_message("@akn_714", 'hi!')
-    bot.reply_to(message, "Hello! What's up Dude!")
+    print(message)
+    bot.reply_to(message, get_response(message))
     # bot.reply_to(bot.get_me())
     # await bot.reply_to(message, await get_response(message))
 
