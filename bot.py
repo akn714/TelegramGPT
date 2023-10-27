@@ -1,7 +1,13 @@
 import os
 
 import telebot
-
+from telegram import (
+    Update,
+    User,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    BotCommand
+)
 from gpt import get_response
 
 from dotenv import load_dotenv
@@ -17,8 +23,11 @@ def send_welcome(message):
     # print('[chat]', bot.get_chat())
     # bot.reply_backend("hi")
     # bot.send_message("@akn_714", 'hi!')
+    # update.message.chat.send_action(action="typing")
     bot.reply_to(message, 'generating response...')
-    bot.reply_to(message, get_response(message.text))
+    response = get_response(message.text)
+    bot.reply_to(message, response['choices'][0]['message']['content'])
+    bot.reply_to(message, response['choices'][0]['related_links'])
     # bot.reply_to(bot.get_me())
     # await bot.reply_to(message, await get_response(message))
 
