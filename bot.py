@@ -54,7 +54,9 @@ async def ask(update: Update, context: CallbackContext):
     response = await get_response(message)
     await update.message.chat.send_action(action="typing")
     await context.bot.edit_message_text(response['choices'][0]['message']['content'], chat_id=placeholder_message.chat_id, message_id=placeholder_message.message_id)
-    await update.message.reply_text(response['choices'][0]['related_links'])
+    for _ in response['choices'][0]['related_links']:
+        await update.message.reply_text(_)
+    
 
 async def message_handler(update: Update, context: CallbackContext, message=None):
     print('[+] message_handler :', update.message.text)
