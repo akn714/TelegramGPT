@@ -41,6 +41,7 @@ Hey There!
 
 Commands:
 /start
+/ask [query]
 """
 async def start(update: Update, context: CallbackContext):
     print('[+] /start')
@@ -48,7 +49,10 @@ async def start(update: Update, context: CallbackContext):
 
 async def ask(update: Update, context: CallbackContext):
     message = update.message.text[5:]
-    print('[+] /ask', message)
+    print(f'[+] /ask "{message}"')
+    if message=="":
+        await update.message.reply_text('Query is empty, Please provide some query!')
+        return
     await update.message.chat.send_action(action="typing")
     placeholder_message = await update.message.reply_text('generating...')
     response = await get_response(message)
