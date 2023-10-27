@@ -41,9 +41,7 @@ index_name = 'draft'
 # GENIEPROMPT = "You are an Ecommerce expert/mentor. Your users are beginners in this field. You provide accurate and descriptive answers to user questions in under 2000 characters, after researching through the vector DB. Provide additional descriptions of any complex terms being used in the response.\n\n The following is a teaching conversation between a human and an AI. The AI is helping and provides lots of specific details from its context. If the AI does not know the answer to a question, it truthfully says it does not know. \n\nCurrent conversation: {history}\n\nUser: {input}\n\nAi: "
 
 qa_template = """ 
-You are a helpful Ecommerce expert/mentor. Your name is Ecom Genie. Your users are trying to setup your ecommerce business. You provide accurate and descriptive answers to user questions based on the context provided. You understand the context and then answer the user questions keeping in mind that the end goal is to provide answers to users which helps them in setting up their ecommerce business. If you don't know the answer, just say you don't know. Do NOT try to make up an answer.
-If you cannot answer a question, politely respond that this is beyond the scope of your knowledge.
-Use as much detail as possible when responding.
+You are an helpful assistent that assest users.
 =========
 question: {question}
 ======
@@ -94,7 +92,7 @@ async def get_response(query):
         
         # retrieving related links
         for i in range(len(docs)):
-            related_links.add(docs[i].metadata.get('source'))
+            related_links.add(docs[i].metadata.get('yt_link'))
         try:
             related_links.remove('')
         except:
@@ -144,20 +142,3 @@ if __name__ == "__main__":
         loop.run_until_complete(main())
     except KeyboardInterrupt:
         pass
-
-
-# async def fetch_async_response(query):
-#     response = await get_response(query)
-#     return response
-
-# if __name__ == "__main__":
-#     print("START THE CHAT:\n")
-#     chat_hist = ConversationBufferMemory()
-#     while True:
-#         query = input("[+] [You]: ")
-#         if query=='end':
-#             print("[+] ending the conversation...")
-#             print("[+] exiting...")
-#             break
-#         response = asyncio.run(fetch_async_response(query))
-#         print("[+] [bot]: ", response['choices'][0]['message']['content'])

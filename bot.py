@@ -30,6 +30,9 @@ from telegram.ext import (
 )
 from telegram.constants import ParseMode, ChatAction
 
+
+from gpt import get_response
+
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -44,9 +47,14 @@ async def start(update: Update, context: CallbackContext):
     await update.message.reply_text(start_reply_text)
 
 async def ask(update: Update, context: CallbackContext):
-    print('[+] /ask', update.message.text[5:])
+    message = update.message.text[5:]
+    print('[+] /ask', message)
     await update.message.chat.send_action(action="typing")
-    await update.message.reply_text(update.message.text[5:])
+    placeholder_message = await update.message.reply_text('generating...')
+    response = await get_response(message)
+    await update.message.chat.send_action(action="typing")
+    await context.bot.edit_message_text(response['choices'][0]['message']['content'], chat_id=placeholder_message.chat_id, message_id=placeholder_message.message_id)
+    await update.message.reply_text(response['choices'][0]['related_links'])
 
 async def message_handler(update: Update, context: CallbackContext, message=None):
     print('[+] message_handler :', update.message.text)
