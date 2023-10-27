@@ -38,20 +38,27 @@ Hey There!
 
 Commands:
 /start
-/ask
 """
 async def start(update: Update, context: CallbackContext):
-
+    print('[+] /start')
     await update.message.reply_text(start_reply_text)
 
-async def ask(update: Update, context: CallbackContext, message=None):
-    await update.message.reply_text('this is your message: '+(message if message!=None else ''))
+async def ask(update: Update, context: CallbackContext):
+    print('[+] /ask', update.message.text[5:])
+    await update.message.chat.send_action(action="typing")
+    await update.message.reply_text(update.message.text[5:])
+
+async def message_handler(update: Update, context: CallbackContext, message=None):
+    print('[+] message_handler :', update.message.text)
+    await update.message.chat.send_action(action="typing")
+    await update.message.reply_text('message: '+update.message.text)
 
 def run_bot() -> None:
     application = ApplicationBuilder().token(os.getenv('TELEGRAM_BOT_TOKEN')).build()
 
     application.add_handler(CommandHandler('start', start))
     application.add_handler(CommandHandler('ask', ask))
+    application.add_handler(MessageHandler(filters.TEXT, message_handler))
     
     print('Bot getting online...')
     application.run_polling()
