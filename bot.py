@@ -31,7 +31,7 @@ from telegram.ext import (
 from telegram.constants import ParseMode, ChatAction
 
 
-# from gpt import get_response
+from gpt import get_response
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -44,18 +44,18 @@ Commands:
 🤖 /ask
 """
 
-global gpt_mode
+gpt_mode = False
 
 async def start(update: Update, context: CallbackContext):
     print('[+] /start')
+    global gpt_mode
     gpt_mode = False
     await update.message.reply_text(start_reply_text)
 
+# async def gpt_modes(update: Update, context: CallbackContext):
+
 async def ask(update: Update, context: CallbackContext):
-    try:
-        print(gpt_mode)
-    except:
-        gpt_mode = False
+    global gpt_mode
     if gpt_mode:
         gpt_mode = False
         await update.message.reply_text('GPT Mode Turned Off')
@@ -71,24 +71,24 @@ async def gpt_chat_handler(update: Update, context: CallbackContext):
         return
     await update.message.chat.send_action(action="typing")
     placeholder_message = await update.message.reply_text('generating...')
-    # response = await get_response(message)
-    response = {
-        'choices':[{
-            'message':{'content':'asdf'},
-            'related_links':['no related links']
-        }]
-    }
+    response = await get_response(message)
+    # response = {
+    #     'choices':[{
+    #         'message':{'content':'asdf'},
+    #         'related_links':['no related links']
+    #     }]
+    # }
     await update.message.chat.send_action(action="typing")
     await context.bot.edit_message_text(response['choices'][0]['message']['content'], chat_id=placeholder_message.chat_id, message_id=placeholder_message.message_id)
     for _ in response['choices'][0]['related_links']:
         await update.message.reply_text(_)
-    await update.message.reply_text('<i>*turn off gpt mode: /ask</i>', parse_mode=ParseMode.HTML)
+    await update.message.reply_text('<i>*use /ask to turn off gpt mode</i>', parse_mode=ParseMode.HTML)
 
 async def message_handler(update: Update, context: CallbackContext, message=None):
     print('[+] message_handler :', update.message.text)
     await update.message.chat.send_action(action="typing")
-    await update.message.reply_text('message: '+update.message.text)
-    gpt_mode = True
+    await update.message.reply_text(f'<i>⚪ query: {update.message.text}</i>', parse_mode=ParseMode.HTML)
+    global gpt_mode
     if gpt_mode:
         await gpt_chat_handler(update, context)
     else:
@@ -110,6 +110,8 @@ def run_bot() -> None:
     application.add_handler(CommandHandler('start', start))
     application.add_handler(CommandHandler('ask', ask))
     application.add_handler(MessageHandler(filters.TEXT, message_handler))
+
+    # application.add_handler(CallbackQueryHandler(gpt_modes, pattern='^turn_gpt_mode_off_on'))
     
     print('Bot getting online...')
     application.run_polling()
