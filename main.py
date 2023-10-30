@@ -1,4 +1,4 @@
-from bot import bot
+from bot import run_bot
 
-print("Bot getting online...")
-bot.infinity_polling()
+if __name__ == '__main__':
+    run_bot()
