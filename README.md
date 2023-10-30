@@ -25,6 +25,6 @@ mv .sample.env .env
 python main.py
 ```
 
-* ToDo:
+### ToDo:
   * chat with assistant
   * uploading file on which you want to train the assistant.
