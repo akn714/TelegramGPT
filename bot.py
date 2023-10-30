@@ -41,8 +41,7 @@ Hey There!
 
 Commands:
 ⚪ /start
-🤖 /ask
-⚪ /gpt_modes
+🤖 /gpt_modes
 """
 
 is_gpt_mode_on = False
@@ -66,22 +65,11 @@ async def set_gpt_mode(update: Update, context: CallbackContext):
     global is_gpt_mode_on
     query = update.callback_query
     await query.answer()
-    
+
     is_gpt_mode_on = eval(query.data)
     print('is_gpt_mode_on:', is_gpt_mode_on)
 
     await context.bot.send_message(query.message.chat.id, f"GPT Mode is {'ON' if is_gpt_mode_on else 'OFF'}")
-
-async def ask(update: Update, context: CallbackContext):
-    global is_gpt_mode_on
-    if is_gpt_mode_on:
-        is_gpt_mode_on = False
-        print('[+] gpt_mode OFF')
-        await update.message.reply_text('GPT Mode Turned Off')
-    else:
-        is_gpt_mode_on = True
-        print('[+] gpt_mode ON')
-        await update.message.reply_text('GPT Mode Turned On')
 
 async def gpt_chat_handler(update: Update, context: CallbackContext):
     message = update.message.text
@@ -129,7 +117,6 @@ def run_bot() -> None:
     )
 
     application.add_handler(CommandHandler('start', start))
-    application.add_handler(CommandHandler('ask', ask))
     application.add_handler(CommandHandler('gpt_modes', show_gpt_modes))
     application.add_handler(MessageHandler(filters.TEXT, message_handler))
     application.add_handler(CallbackQueryHandler(set_gpt_mode))
