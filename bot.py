@@ -42,25 +42,45 @@ Hey There!
 Commands:
 ⚪ /start
 🤖 /ask
+⚪ /gpt_modes
 """
 
-gpt_mode = False
+is_gpt_mode_on = False
 
 async def start(update: Update, context: CallbackContext):
     print('[+] /start')
-    global gpt_mode
-    gpt_mode = False
+    global is_gpt_mode_on
+    is_gpt_mode_on = False
     await update.message.reply_text(start_reply_text)
 
-# async def gpt_modes(update: Update, context: CallbackContext):
+async def show_gpt_modes(update: Update, context: CallbackContext):
+    text = 'Turn GPT Mode ON or OFF'
+    keyboard = []
+    keyboard.append([InlineKeyboardButton('ON', callback_data='True'),InlineKeyboardButton('OFF', callback_data='False')])
+    # keyboard.append([InlineKeyboardButton('OFF', callback_data=f"turn_gpt_mode_off_on|")])
+
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    await update.message.reply_text(text, reply_markup=reply_markup)
+
+async def set_gpt_mode(update: Update, context: CallbackContext):
+    global is_gpt_mode_on
+    query = update.callback_query
+    await query.answer()
+    
+    is_gpt_mode_on = eval(query.data)
+    print('is_gpt_mode_on:', is_gpt_mode_on)
+
+    await context.bot.send_message(query.message.chat.id, f"GPT Mode is {'ON' if is_gpt_mode_on else 'OFF'}")
 
 async def ask(update: Update, context: CallbackContext):
-    global gpt_mode
-    if gpt_mode:
-        gpt_mode = False
+    global is_gpt_mode_on
+    if is_gpt_mode_on:
+        is_gpt_mode_on = False
+        print('[+] gpt_mode OFF')
         await update.message.reply_text('GPT Mode Turned Off')
     else:
-        gpt_mode = True
+        is_gpt_mode_on = True
+        print('[+] gpt_mode ON')
         await update.message.reply_text('GPT Mode Turned On')
 
 async def gpt_chat_handler(update: Update, context: CallbackContext):
@@ -88,8 +108,8 @@ async def message_handler(update: Update, context: CallbackContext, message=None
     print('[+] message_handler :', update.message.text)
     await update.message.chat.send_action(action="typing")
     await update.message.reply_text(f'<i>⚪ query: {update.message.text}</i>', parse_mode=ParseMode.HTML)
-    global gpt_mode
-    if gpt_mode:
+    global is_gpt_mode_on
+    if is_gpt_mode_on:
         await gpt_chat_handler(update, context)
     else:
         await update.message.reply_text('GPT Mode is Off!\nplease use /ask to turn On of Off')
@@ -97,7 +117,8 @@ async def message_handler(update: Update, context: CallbackContext, message=None
 async def post_init(application: Application):
     await application.bot.set_my_commands([
         BotCommand("/start", "Start Bot"),
-        BotCommand("/ask", "Turn GPT Mode On or Off")
+        BotCommand("/ask", "Turn GPT Mode On or Off"),
+        BotCommand("/gpt_modes", "Turn GPT Mode On or Off")
     ])
 
 def run_bot() -> None:
@@ -109,7 +130,9 @@ def run_bot() -> None:
 
     application.add_handler(CommandHandler('start', start))
     application.add_handler(CommandHandler('ask', ask))
+    application.add_handler(CommandHandler('gpt_modes', show_gpt_modes))
     application.add_handler(MessageHandler(filters.TEXT, message_handler))
+    application.add_handler(CallbackQueryHandler(set_gpt_mode))
 
     # application.add_handler(CallbackQueryHandler(gpt_modes, pattern='^turn_gpt_mode_off_on'))
     
