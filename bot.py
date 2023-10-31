@@ -92,6 +92,36 @@ async def gpt_chat_handler(update: Update, context: CallbackContext):
         await update.message.reply_text(_)
     await update.message.reply_text('<i>*use /ask to turn off gpt mode</i>', parse_mode=ParseMode.HTML)
 
+async def transcribe_audio(audio_file):
+    r = await openai.Audio.atranscribe("whisper-1", audio_file)
+    return r["text"]
+
+async def voice_message_handler(update: Update, context: CallbackContext):
+    voice = update.message.voice
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        tmp_dir = Path(tmp_dir)
+        voice_ogg_path = tmp_dir / "voice.ogg"
+
+        # download
+        voice_file = await context.bot.get_file(voice.file_id)
+        await voice_file.download_to_drive(voice_ogg_path)
+
+        # convert to mp3
+        voice_mp3_path = tmp_dir / "voice.mp3"
+        pydub.AudioSegment.from_file(voice_ogg_path).export(
+            voice_mp3_path, format="mp3")
+
+        # transcribe
+        with open(voice_mp3_path, "rb") as f:
+            transcribed_text = await transcribe_audio(f)
+
+            if transcribed_text is None:
+                transcribed_text = ""
+
+    text = f"🎤: <i>{transcribed_text}</i>"
+    await update.message.reply_text(text, parse_mode=ParseMode.HTML)
+    await update.message.reply_text('hi')
+
 async def message_handler(update: Update, context: CallbackContext, message=None):
     print('[+] message_handler :', update.message.text)
     await update.message.chat.send_action(action="typing")
@@ -119,6 +149,7 @@ def run_bot() -> None:
     application.add_handler(CommandHandler('start', start))
     application.add_handler(CommandHandler('gpt_modes', show_gpt_modes))
     application.add_handler(MessageHandler(filters.TEXT, message_handler))
+    application.add_handler(MessageHandler(filters.VOICE, voice_message_handler))
     application.add_handler(CallbackQueryHandler(set_gpt_mode))
 
     # application.add_handler(CallbackQueryHandler(gpt_modes, pattern='^turn_gpt_mode_off_on'))
