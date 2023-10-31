@@ -135,7 +135,6 @@ async def message_handler(update: Update, context: CallbackContext, message=None
 async def post_init(application: Application):
     await application.bot.set_my_commands([
         BotCommand("/start", "Start Bot"),
-        BotCommand("/ask", "Turn GPT Mode On or Off"),
         BotCommand("/gpt_modes", "Turn GPT Mode On or Off")
     ])
 
