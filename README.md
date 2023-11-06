@@ -5,7 +5,7 @@ An AI assistant trained on your custome data straight into your Telegram app.
 To make this project yours follow the steps given below:
 * First create you telegram bot from [@BotFather](https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://t.me/botfather&ved=2ahUKEwjMrZKyvKWCAxUubGwGHTzNOv4QFnoECBcQAQ&usg=AOvVaw2BEDQDJSQ7eflHAoAe_mIU) on telegram
 * get your bot token from bot father
-* Clone the project or download zip file of this project
+* Clone the project's repository or download zip file of this project
 ```bash
 git clone git@github.com:adarshkumar714/TelegramGPT.git
 ```
@@ -21,7 +21,7 @@ pip install -r requirements.txt
 ```bash
 mv .sample.env .env
 ```
-* Set environment variables in `.env` file
+* Set proper environment variables in `.env` file
 * Run the bot
 ```bash
 python main.py
