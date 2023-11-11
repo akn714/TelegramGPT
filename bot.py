@@ -90,7 +90,7 @@ async def gpt_chat_handler(update: Update, context: CallbackContext):
     await context.bot.edit_message_text(response['choices'][0]['message']['content'], chat_id=placeholder_message.chat_id, message_id=placeholder_message.message_id)
     for _ in response['choices'][0]['related_links']:
         await update.message.reply_text(_)
-    await update.message.reply_text('<i>*use /ask to turn off gpt mode</i>', parse_mode=ParseMode.HTML)
+    await update.message.reply_text('<i>*use /gpt_mode to turn gpt mode on or off</i>', parse_mode=ParseMode.HTML)
 
 async def transcribe_audio(audio_file):
     r = await openai.Audio.atranscribe("whisper-1", audio_file)
@@ -130,7 +130,7 @@ async def message_handler(update: Update, context: CallbackContext, message=None
     if is_gpt_mode_on:
         await gpt_chat_handler(update, context)
     else:
-        await update.message.reply_text('GPT Mode is Off!\nplease use /ask to turn On of Off')
+        await update.message.reply_text('GPT Mode is Off!\nplease use /gpt_mode to turn gpt mode on of Off')
 
 async def post_init(application: Application):
     await application.bot.set_my_commands([
